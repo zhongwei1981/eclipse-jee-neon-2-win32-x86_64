@@ -1,7 +1,12 @@
 {
     "success": true,
-    "users": [
-        {"id": 1, "name": 'Ed3',    "email": "ed@sencha.com"},
-        {"id": 2, "name": 'Tommy3', "email": "tommy@sencha.com"}
-    ]
+    "users": [ {
+    	"id": 1,
+    	"name": "Ed_33",
+    	"email": "ed@sencha.com"
+    }, {
+    	"id": 2,
+    	"name": "Tommy_33",
+    	"email": "tommy@sencha.com"
+    } ]
 }

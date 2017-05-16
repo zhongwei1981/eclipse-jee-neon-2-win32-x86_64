@@ -5,17 +5,20 @@ Ext.define('AM.controller.Users', {
 
 	stores : [ 'Users' ],
 
-	views : [ 'user.List', 'user.Edit' ],
+	views : [ 'user.List', 'user.Edit' ],	//to load these files automatically
 
 	init : function() {
+		console.log('#### Initialized Users! This happens before the Application launch function is called');
 		this.control({
+			// About ComponentQuery, see file:///F:/zhong_J2EE/ext-4.2.1.883/docs/index.html#!/api/Ext.ComponentQuery
 			'viewport > panel' : {
+				//Event: operation
 				render : this.onPanelRendered
 			},
 			'viewport > userlist' : {
 				itemdblclick : this.editUser
 			},
-			'useredit button[action=save]' : {
+			'useredit button[action=save]' : {	// 'useredit' = xtype, 'save' = action
 				click : this.updateUser
 			}
 		});
@@ -26,17 +29,15 @@ Ext.define('AM.controller.Users', {
 	},
 
 	editUser : function(grid, record) {
-		console.log('Double clicked on ' + record.get('name'));
+		console.log('#### Double clicked on ' + record.get('name'));
 
-		var view = Ext.widget('useredit');
-
+		var view = Ext.widget('useredit');	// = Ext.create('widget.useredit')
 		view.down('form').loadRecord(record);
-		
 	},
-	
+
 	updateUser: function(button) {
-        console.log('clicked the Save button');
-        
+        console.log('#### clicked the Save button');
+
         var win    = button.up('window'),
 	        form   = win.down('form'),
 	        record = form.getRecord(),
