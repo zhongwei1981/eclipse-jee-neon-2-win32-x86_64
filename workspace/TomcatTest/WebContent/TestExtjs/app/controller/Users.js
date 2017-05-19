@@ -46,6 +46,28 @@ Ext.define('AM.controller.Users', {
 	    record.set(values);
 	    win.close();
 	    // synchronize the store after editing the record
-	    this.getUsersStore().sync();
+	    this.getUsersStore().sync({
+	    	success: function(batch, options) {
+	    		console.log('#### success to sync()');
+	    	},
+	    	
+	    	failure: function(batch, options) {
+	    		console.log('#### fail to sync()');
+	    	}
+	    });
+
+		console.log('#### 111');
+		Ext.Ajax.request({
+			method : 'POST',
+			url : '/TomcatTest/UsersServlet',
+			success : function(response) {
+				Ext.Msg.alert("return message", "OK, submit to server");
+			},
+			failure : function() {
+				Ext.Msg.alert("return message", "Failed, submit to server");
+			},
+			params : values
+		});
+		console.log('#### 222');
     }
 });
