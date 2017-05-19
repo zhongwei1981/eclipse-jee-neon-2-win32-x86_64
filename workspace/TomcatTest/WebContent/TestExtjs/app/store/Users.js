@@ -19,5 +19,10 @@ Ext.define('AM.store.Users', {
 			root : 'users',
 			successProperty : 'success'
 		}
-	}
+	},
+
+	sorters : [ {
+		property : 'name',
+		direction : 'DESC'
+	} ]
 });
