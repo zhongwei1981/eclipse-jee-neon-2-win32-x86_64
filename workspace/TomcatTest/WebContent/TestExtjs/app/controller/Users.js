@@ -55,19 +55,5 @@ Ext.define('AM.controller.Users', {
 	    		console.log('#### fail to sync()');
 	    	}
 	    });
-
-		console.log('#### 111');
-		Ext.Ajax.request({
-			method : 'POST',
-			url : '/TomcatTest/UsersServlet',
-			success : function(response) {
-				Ext.Msg.alert("return message", "OK, submit to server");
-			},
-			failure : function() {
-				Ext.Msg.alert("return message", "Failed, submit to server");
-			},
-			params : values
-		});
-		console.log('#### 222');
     }
 });

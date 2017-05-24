@@ -1,5 +1,6 @@
 package TestExtjs_Servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -8,11 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  * Servlet implementation class FormServlet
  */
 @WebServlet("/UsersServlet")
 public class UsersServlet extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -28,7 +32,7 @@ public class UsersServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("#### /UsersServlet, doGet() start");
+		printLog("#### /UsersServlet, doGet() start");
 		
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
@@ -38,13 +42,43 @@ public class UsersServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("#### /UsersServlet, doPost() start");
-		
-		String name = request.getParameter("name");
-		String email = request.getParameter("email");
-		System.out.println(String.format("#### /UsersServlet, doPost(), (%s, %s)", name, email));
-		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		printLog("#### /UsersServlet, doPost() start");
+
+		String name = "";
+		String email = "";
+		printLog("#### " + request.getContentType());
+		if (request.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
+			name = request.getParameter("name");
+			email = request.getParameter("email");
+		}
+		else if (request.getContentType().equals("application/json")) {
+			String strJson = readJsonString(request);
+			printLog("#### strJson = " + strJson);
+
+			JSON_User j_user = JSON.parseObject(strJson, JSON_User.class);
+			name = j_user.getName();
+			email = j_user.getEmail();
+		}
+		printLog(String.format("#### /UsersServlet, doPost(), (%s, %s)", name, email));
+	}
+	
+	public String readJsonString(HttpServletRequest request) {
+		StringBuffer json = new StringBuffer();
+
+		try {
+			BufferedReader reader = request.getReader();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				json.append(line);
+			}
+		} catch (Exception e) {
+			printLog("#### Exception");
+			printLog(e.toString());
+		}
+		return json.toString();
 	}
 
+	private void printLog(final String slog) {
+    	System.out.println(slog);
+    }
 }
