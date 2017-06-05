@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 public class UsersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	private static Log log = new Log(UsersServlet.class.getSimpleName());
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -32,7 +33,7 @@ public class UsersServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		printLog("#### /UsersServlet, doGet() start");
+		log.d("#### doGet() start");
 
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
@@ -43,7 +44,7 @@ public class UsersServlet extends HttpServlet {
 		j_user.setEmail("ed@sencha.com");
 		String str = String.format("[%s]", JSON.toJSONString(j_user));
 		response.getWriter().print(str);
-		printLog("#### /UsersServlet, doGet(), response: %s", str);
+		log.d("#### doGet(), response: %s", str);
 	}
 
 	/**
@@ -51,24 +52,24 @@ public class UsersServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		printLog("#### /UsersServlet, doPost() start");
+		log.d("#### doPost() start");
 
 		String name = "";
 		String email = "";
-		printLog("#### " + request.getContentType());
+		log.d("#### " + request.getContentType());
 		if (request.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
 			name = request.getParameter("name");
 			email = request.getParameter("email");
 		}
 		else if (request.getContentType().equals("application/json")) {
 			String strJson = readJsonString(request);
-			printLog("#### strJson = " + strJson);
+			log.d("#### strJson = " + strJson);
 
 			JSON_User j_user = JSON.parseObject(strJson, JSON_User.class);
 			name = j_user.getName();
 			email = j_user.getEmail();
 		}
-		printLog("#### /UsersServlet, doPost(), (%s, %s)", name, email);
+		log.d("#### doPost(), (%s, %s)", name, email);
 	}
 	
 	public String readJsonString(HttpServletRequest request) {
@@ -81,15 +82,8 @@ public class UsersServlet extends HttpServlet {
 				strJson.append(line);
 			}
 		} catch (Exception e) {
-			printLog("#### Exception");
-			printLog(e.toString());
+			log.e("#### Exception: " + e.toString());
 		}
 		return strJson.toString();
 	}
-
-	private long printLog_line = 0;
-	private void printLog(String str, Object... args) {
-		String prefix = String.format("[%d] ", printLog_line++);
-    	System.out.println(String.format(prefix + str, args));
-    }
 }
