@@ -33,8 +33,12 @@ public class UsersServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		printLog("#### /UsersServlet, doGet() start");
-		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		String str = "[{\"name\":\"Ed_33\",\"email\":\"ed@sencha.com\",\"id\":1}]";
+		response.getWriter().print(str);
+		printLog(String.format("#### /UsersServlet, doGet(), response: %s", str));
 	}
 
 	/**

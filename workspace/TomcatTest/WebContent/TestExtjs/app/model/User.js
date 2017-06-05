@@ -7,8 +7,7 @@ Ext.define('AM.model.User', {
 	proxy : {
 		type : 'ajax',
 		api : {
-			read : 'data/users.json',
-			//read: '/TomcatTest/UsersServlet',
+			read: '/TomcatTest/UsersServlet',
 			update: '/TomcatTest/UsersServlet'
 		},
 		// The reader is responsible for decoding the server response into a
