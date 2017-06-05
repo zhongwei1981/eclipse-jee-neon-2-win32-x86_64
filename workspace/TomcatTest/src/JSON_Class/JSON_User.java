@@ -1,4 +1,4 @@
-package TestExtjs_Servlet;
+package JSON_Class;
 
 public class JSON_User {
 
