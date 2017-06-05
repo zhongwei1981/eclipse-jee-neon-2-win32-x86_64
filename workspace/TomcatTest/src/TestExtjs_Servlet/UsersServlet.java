@@ -36,9 +36,14 @@ public class UsersServlet extends HttpServlet {
 
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		String str = "[{\"name\":\"Ed_33\",\"email\":\"ed@sencha.com\",\"id\":1}]";
+		
+		JSON_User j_user = new JSON_User();
+		j_user.setId(1L);
+		j_user.setName("Ed_33");
+		j_user.setEmail("ed@sencha.com");
+		String str = String.format("[%s]", JSON.toJSONString(j_user));
 		response.getWriter().print(str);
-		printLog(String.format("#### /UsersServlet, doGet(), response: %s", str));
+		printLog("#### /UsersServlet, doGet(), response: %s", str);
 	}
 
 	/**
@@ -63,26 +68,28 @@ public class UsersServlet extends HttpServlet {
 			name = j_user.getName();
 			email = j_user.getEmail();
 		}
-		printLog(String.format("#### /UsersServlet, doPost(), (%s, %s)", name, email));
+		printLog("#### /UsersServlet, doPost(), (%s, %s)", name, email);
 	}
 	
 	public String readJsonString(HttpServletRequest request) {
-		StringBuffer json = new StringBuffer();
+		StringBuffer strJson = new StringBuffer();
 
 		try {
 			BufferedReader reader = request.getReader();
 			String line;
 			while ((line = reader.readLine()) != null) {
-				json.append(line);
+				strJson.append(line);
 			}
 		} catch (Exception e) {
 			printLog("#### Exception");
 			printLog(e.toString());
 		}
-		return json.toString();
+		return strJson.toString();
 	}
 
-	private void printLog(final String slog) {
-    	System.out.println(slog);
+	private long printLog_line = 0;
+	private void printLog(String str, Object... args) {
+		String prefix = String.format("[%d] ", printLog_line++);
+    	System.out.println(String.format(prefix + str, args));
     }
 }
