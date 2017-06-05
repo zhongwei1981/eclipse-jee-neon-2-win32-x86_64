@@ -1,4 +1,27 @@
 Ext.define('AM.model.User', {
 	extend : 'Ext.data.Model',
-	fields : [ 'name', 'email' ]
+	fields : [ 'name', 'email' ],
+	
+	// Proxies are the way to load and save data from a Store or a Model.
+	// Different proxies for AJAX: JSON-P, HTML5 localStorage
+	proxy : {
+		type : 'ajax',
+		api : {
+			read : 'data/users.json',
+			//read: '/TomcatTest/UsersServlet',
+			update: '/TomcatTest/UsersServlet'
+		},
+		// The reader is responsible for decoding the server response into a
+		// format the Store can understand
+		reader : {
+			type : 'json',
+			root : 'users',
+			successProperty : 'success'
+		},
+
+		writer: {
+			writeAllFields: true,
+		    nameProperty: 'mapping'
+		}
+	}
 });
