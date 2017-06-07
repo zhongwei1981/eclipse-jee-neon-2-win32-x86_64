@@ -2,6 +2,7 @@ package TestExtjs_Servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
 
+import CommonTools.DB_Connection;
+import CommonTools.Log;
 import JSON_Class.JSON_User;
 
 /**
@@ -21,7 +24,8 @@ public class UsersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private static Log log = new Log(UsersServlet.class.getSimpleName());
-       
+	private static DB_Connection conn = DB_Connection.getInstance();
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -71,10 +75,21 @@ public class UsersServlet extends HttpServlet {
 			name = j_user.getName();
 			email = j_user.getEmail();
 		}
-		log.d("#### doPost(), (%s, %s)", name, email);
+
+		String strSQL = String.format(
+							"INSERT INTO \"user\" (name, email) VALUES ('%s', '%s')",
+							name, email);
+		log.d("#### strSQL = " + strSQL);
+		try {
+			conn.exec(strSQL);
+		} catch (SQLException e) {
+			log.e(e.toString());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write(e.toString());
+		}
 	}
 	
-	public String readJsonString(HttpServletRequest request) {
+	private String readJsonString(HttpServletRequest request) {
 		StringBuffer strJson = new StringBuffer();
 
 		try {

@@ -15,12 +15,21 @@ Ext.define('AM.model.User', {
 		reader : {
 			type : 'json',
 			root : 'users',
-			successProperty : 'success'
+			successProperty : 'success',
+			messageProperty : 'message'
 		},
 
 		writer: {
 			writeAllFields: true,
 		    nameProperty: 'mapping'
+		},
+		
+		listeners : {
+			exception : function(reader, response, error, eOpts) {
+				if (response && response.responseText) {
+					Ext.Msg.alert('Server error: ', response.responseText);
+				}
+			}
 		}
 	}
 });
