@@ -2,7 +2,10 @@ package TestExtjs_Servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 
 import CommonTools.DB_Connection;
 import CommonTools.Log;
@@ -43,14 +47,30 @@ public class UsersServlet extends HttpServlet {
 
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		
-		JSON_User j_user = new JSON_User();
-		j_user.setId(1L);
-		j_user.setName("Ed_33");
-		j_user.setEmail("ed@sencha.com");
-		String str = String.format("[%s]", JSON.toJSONString(j_user));
-		response.getWriter().print(str);
-		log.d("#### doGet(), response: %s", str);
+
+		String strSQL = String.format("SELECT id, name, email from \"user\" ");
+		log.d("#### strSQL = " + strSQL);
+		try {
+			ResultSet rs = conn.execQuery(strSQL);
+			JSONArray jsonArray = new JSONArray();
+			while (rs.next()) {
+				JSON_User j_user = new JSON_User();
+				log.d("#### (%d, %s, %s)",
+						rs.getLong("id"), rs.getString("name"), rs.getString("email"));
+				j_user.setId(rs.getLong("id"));
+				j_user.setName(rs.getString("name"));
+				j_user.setEmail(rs.getString("email"));
+				jsonArray.add(j_user);
+			}
+			
+			String str = jsonArray.toJSONString();
+			log.d("#### response: %s", str);
+			response.getWriter().print(str);
+		} catch (SQLException e) {
+			log.e(e.toString());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write(e.toString());
+		}
 	}
 
 	/**
@@ -81,7 +101,7 @@ public class UsersServlet extends HttpServlet {
 							name, email);
 		log.d("#### strSQL = " + strSQL);
 		try {
-			conn.exec(strSQL);
+			conn.execUpdate(strSQL);
 		} catch (SQLException e) {
 			log.e(e.toString());
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

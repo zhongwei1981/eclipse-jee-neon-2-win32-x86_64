@@ -3,6 +3,7 @@ package CommonTools;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DB_Connection {
@@ -43,8 +44,23 @@ public class DB_Connection {
 			log.e(e);
 		}
 	}
+	
+	public ResultSet execQuery(String strSQL) throws SQLException{
+		ResultSet rs;
 
-	public boolean exec(String strSQL) throws SQLException{
+		try {
+			PreparedStatement prep = conn.prepareStatement(strSQL);
+			rs = prep.executeQuery();
+			log.d("#### Done: %s", strSQL);
+		} catch (SQLException e) {
+			log.e(e);
+			throw e;
+		}
+		
+		return rs;
+	}
+
+	public boolean execUpdate(String strSQL) throws SQLException{
 		boolean ret = true;
 
 		try {
