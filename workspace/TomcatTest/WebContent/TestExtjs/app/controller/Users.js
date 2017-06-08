@@ -38,21 +38,26 @@ Ext.define('AM.controller.Users', {
 	updateUser: function(button) {
         console.log('#### clicked the Save button');
 
-        var win    = button.up('window'),
+        var me     = this,
+        	win    = button.up('window'),
 	        form   = win.down('form'),
 	        record = form.getRecord(),
-	        values = form.getValues();
+	        values = form.getValues(),
+        	store  = me.getUsersStore();
 
-	    record.set(values);
+        record.set(values);
 	    win.close();
+
 	    // synchronize the store after editing the record
-	    this.getUsersStore().sync({
+	    store.sync({
 	    	success: function(batch, options) {
 	    		console.log('#### success to sync()');
+	    		store.commitChanges();
 	    	},
 	    	
 	    	failure: function(batch, options) {
 	    		console.log('#### fail to sync()');
+	    		store.rejectChanges();
 	    	}
 	    });
     }
