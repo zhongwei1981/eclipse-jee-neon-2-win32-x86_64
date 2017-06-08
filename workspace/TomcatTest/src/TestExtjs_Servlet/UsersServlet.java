@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,14 +39,15 @@ public class UsersServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		log.d("#### doGet() start");
 
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
 
-		String strSQL = String.format("SELECT id, name, email from \"user\" ");
+		String strSQL = String.format("SELECT id, name, email from [user] ");
 		log.d("#### strSQL = " + strSQL);
 		try {
 			ResultSet rs = conn.execQuery(strSQL);
@@ -76,19 +75,20 @@ public class UsersServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		log.d("#### doPost() start");
 
 		String name = "";
 		String email = "";
-		log.d("#### " + request.getContentType());
-		if (request.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
-			name = request.getParameter("name");
-			email = request.getParameter("email");
+		log.d("#### " + req.getContentType());
+		if (req.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
+			name = req.getParameter("name");
+			email = req.getParameter("email");
 		}
-		else if (request.getContentType().equals("application/json")) {
-			String strJson = readJsonString(request);
+		else if (req.getContentType().equals("application/json")) {
+			String strJson = readJsonString(req);
 			log.d("#### strJson = " + strJson);
 
 			JSON_User j_user = JSON.parseObject(strJson, JSON_User.class);
@@ -97,15 +97,81 @@ public class UsersServlet extends HttpServlet {
 		}
 
 		String strSQL = String.format(
-							"INSERT INTO \"user\" (name, email) VALUES ('%s', '%s')",
+							"UPDATE [user] SET email = '%s' where name = '%s' ",
+							email, name);
+		log.d("#### strSQL = " + strSQL);
+		try {
+			conn.execUpdate(strSQL);
+		} catch (SQLException e) {
+			log.e(e.toString());
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			resp.getWriter().write(e.toString());
+		}
+	}
+	
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+	              throws ServletException, java.io.IOException {
+		log.d("#### doPut() start");
+
+		String name = "";
+		String email = "";
+		log.d("#### " + req.getContentType());
+		if (req.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
+			name = req.getParameter("name");
+			email = req.getParameter("email");
+		}
+		else if (req.getContentType().equals("application/json")) {
+			String strJson = readJsonString(req);
+			log.d("#### strJson = " + strJson);
+
+			JSON_User j_user = JSON.parseObject(strJson, JSON_User.class);
+			name = j_user.getName();
+			email = j_user.getEmail();
+		}
+
+		String strSQL = String.format(
+							"INSERT INTO [user] (name, email) VALUES ('%s', '%s') ",
 							name, email);
 		log.d("#### strSQL = " + strSQL);
 		try {
 			conn.execUpdate(strSQL);
 		} catch (SQLException e) {
 			log.e(e.toString());
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			response.getWriter().write(e.toString());
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			resp.getWriter().write(e.toString());
+		}
+	}
+	
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, java.io.IOException {
+		log.d("#### doDelete() start");
+
+		String name = "";
+		String email = "";
+		log.d("#### " + req.getContentType());
+		if (req.getContentType().equals("application/x-www-form-urlencoded; charset=UTF-8")) {
+			name = req.getParameter("name");
+			email = req.getParameter("email");
+		}
+		else if (req.getContentType().equals("application/json")) {
+			String strJson = readJsonString(req);
+			log.d("#### strJson = " + strJson);
+
+			JSON_User j_user = JSON.parseObject(strJson, JSON_User.class);
+			name = j_user.getName();
+			email = j_user.getEmail();
+		}
+
+		String strSQL = String.format(
+							"DELETE [user] where name = '%s' ",
+							name);
+		log.d("#### strSQL = " + strSQL);
+		try {
+			conn.execUpdate(strSQL);
+		} catch (SQLException e) {
+			log.e(e.toString());
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			resp.getWriter().write(e.toString());
 		}
 	}
 	
